@@ -67,26 +67,20 @@ class StopRelation
 
   def load_routes(path_routes_map)
     next_path_routes_map = {}
-    current_path_length = path_routes_map.keys.first.routes_count #The keys should all have the same routes_count
+    #current_path_length = path_routes_map.keys.first.routes_count #The keys should all have the same routes_count
 
     path_routes_map.each do |path, routes|
       routes.each do |route|
         next_path = path + route
 
-        break if routes_count && current_path_length + 1 > routes_count
-        break if max_routes_count && current_path_length + 1 > max_routes_count
-        next if max_distance && next_path.distance > max_distance
-        break if shortest && paths.first && paths.first.distance <= next_path.distance
+        break if path_fail_options? next_path
 
         if route.to_stop == end_stop
-          unless (routes_count && routes_count != current_path_length + 1) ||
-            (max_routes_count && max_routes_count < current_path_length + 1) ||
-            (max_distance && max_distance < next_path.distance)
-
+          if path_pass_options next_path
             @paths << next_path
             if shortest
               @paths = [paths.min_by { |route| route.distance }]
-              next
+              break
             end
           end
         end
@@ -98,6 +92,21 @@ class StopRelation
     end
 
     load_routes(next_path_routes_map) unless next_path_routes_map.empty?
+  end
+
+  def path_fail_options?(path)
+    return true if routes_count && path.routes_count > routes_count
+    return true if max_routes_count && path.routes_count > max_routes_count
+    return true if max_distance && path.distance > max_distance
+    return true if shortest && paths.first && paths.first.distance <= path.distance
+  end
+
+  def path_pass_options?(path)
+    pass = true
+    pass = false if routes_count && routes_count != path.routes_count
+    pass = false if max_routes_count && max_routes_count < path.routes_count
+    pass = false if max_distance && max_distance < path.distance
+    pass
   end
 
 end
