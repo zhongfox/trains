@@ -76,7 +76,7 @@ class StopRelation
         break if path_fail_options? next_path
 
         if route.to_stop == end_stop
-          if path_pass_options next_path
+          if path_pass_options? next_path
             @paths << next_path
             if shortest
               @paths = [paths.min_by { |route| route.distance }]
