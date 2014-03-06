@@ -49,14 +49,18 @@ class StopRelation
   def load!
     return false if loaded
 
-    unless routes_count || max_routes_count || max_distance || shortest
+    unless valid_options?
       puts 'You must give stop relation at least one limiting condition'
       return false
     end
 
     path = Path.new.begin_from(begin_stop)
-    load_routes(path => stops[begin_stop])
+    find_path(path => stops[begin_stop])
     @loaded = true
+  end
+
+  def valid_options?
+    routes_count || max_routes_count || max_distance || shortest
   end
 
   def loaded?
@@ -65,7 +69,7 @@ class StopRelation
 
   private
 
-  def load_routes(path_routes_map)
+  def find_path(path_routes_map)
     next_path_routes_map = {}
     #current_path_length = path_routes_map.keys.first.routes_count #The keys should all have the same routes_count
 
@@ -75,13 +79,11 @@ class StopRelation
 
         break if path_fail_options? next_path
 
-        if route.to_stop == end_stop
-          if path_pass_options? next_path
-            @paths << next_path
-            if shortest
-              @paths = [paths.min_by { |route| route.distance }]
-              break
-            end
+        if route.to_stop == end_stop && path_pass_options?(next_path)
+          @paths << next_path
+          if shortest
+            @paths = [paths.min_by { |route| route.distance }]
+            break
           end
         end
 
@@ -91,7 +93,7 @@ class StopRelation
 
     end
 
-    load_routes(next_path_routes_map) unless next_path_routes_map.empty?
+    find_path(next_path_routes_map) unless next_path_routes_map.empty?
   end
 
   def path_fail_options?(path)
