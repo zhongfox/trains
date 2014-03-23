@@ -23,6 +23,10 @@ class Path
     self
   end
 
+  def time_cost
+    (length - 1) * StopMap::TIME_COST_PER_STOP + distance * StopMap::TIME_COST_PER_DISTANCE
+  end
+
   def +(route)
     self.class.new(*routes + [route])
   end

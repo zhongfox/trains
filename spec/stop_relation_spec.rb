@@ -12,8 +12,9 @@ describe StopRelation do
     end
 
     it 'raises error if input stop dont exist' do
-      -> { StopRelation.new(subject.stops, 'M', 'C') }.should raise_error
-      -> { StopRelation.new(subject.stops, 'C', 'K') }.should raise_error
+      -> { StopRelation.new(subject.stops, 'M', 'C') }.should raise_error('The stops must contain the begin stop')
+      #-> { StopRelation.new(subject.stops, 'C', 'K') }.should raise_error
+      expect { StopRelation.new(subject.stops, 'C', 'K') }.to raise_error
     end
   end
 
@@ -54,6 +55,13 @@ describe StopRelation do
     it 'returns self' do
       stop_relation = StopRelation.new(subject.stops, 'C', 'C')
       expect(stop_relation.where(routes_count: 3)).to be(stop_relation)
+    end
+
+    it 'adds max_cost_time option' do
+      stop_relation = StopRelation.new(subject.stops, 'C', 'C')
+      stop_relation.where(max_cost_time: 30)
+
+      expect(stop_relation.max_cost_time).to eq(30)
     end
   end
 

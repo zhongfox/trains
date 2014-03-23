@@ -1,6 +1,9 @@
 class StopMap
   attr_reader :stops
 
+  TIME_COST_PER_STOP = 2
+  TIME_COST_PER_DISTANCE = 1
+
   def initialize(*routes)
     @stops = {}
     routes.each { |route| add_route(route) }

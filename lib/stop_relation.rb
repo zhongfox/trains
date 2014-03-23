@@ -2,7 +2,7 @@ class StopRelation
   include Enumerable
 
   attr_reader :stops, :begin_stop, :end_stop, :paths, :loaded
-  attr_accessor :routes_count, :max_routes_count, :max_distance, :shortest
+  attr_accessor :routes_count, :max_routes_count, :max_distance, :shortest, :max_cost_time
 
   def initialize(stops, begin_stop, end_stop)
     raise 'The stops must contain the begin stop' if stops[begin_stop].nil?
@@ -29,7 +29,7 @@ class StopRelation
   end
 
   def where(options)
-    [:routes_count, :max_routes_count, :max_distance].each do |option|
+    [:routes_count, :max_routes_count, :max_distance, :max_cost_time].each do |option|
       if options.include? option
         raise "#{option} must bigger than 0" if options[option].to_i <= 0
         send("#{option}=", options[option])
@@ -60,7 +60,7 @@ class StopRelation
   end
 
   def valid_options?
-    routes_count || max_routes_count || max_distance || shortest
+    routes_count || max_routes_count || max_distance || shortest || max_cost_time
   end
 
   def loaded?
@@ -101,14 +101,20 @@ class StopRelation
     return true if max_routes_count && path.routes_count > max_routes_count
     return true if max_distance && path.distance > max_distance
     return true if shortest && paths.first && paths.first.distance <= path.distance
+    return true if max_cost_time && path.time_cost > max_cost_time
   end
 
   def path_pass_options?(path)
-    pass = true
-    pass = false if routes_count && routes_count != path.routes_count
-    pass = false if max_routes_count && max_routes_count < path.routes_count
-    pass = false if max_distance && max_distance < path.distance
-    pass
+    # pass = true
+    # pass = false if routes_count && routes_count != path.routes_count
+    # pass = false if max_routes_count && max_routes_count < path.routes_count
+    # pass = false if max_distance && max_distance < path.distance
+    # pass = false if max_cost_time && max_cost_time < path.time_cost
+    # pass
+    [routes_count && (routes_count != path.routes_count),
+     max_routes_count && (max_routes_count < path.routes_count),
+     max_distance && (max_distance < path.distance),
+     max_cost_time && (max_cost_time < path.time_cost)].all? { |result| !result }
   end
 
 end

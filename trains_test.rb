@@ -28,13 +28,17 @@ stop_map = StopMap.new(*routes)
 
 ['ABC', 'AD', 'ADC', 'AEBCD', 'AED'].each do |stops|
   if routes = stop_map.get_routes_by_path_stops(stops)
-    puts Path.new(*routes).distance
+    #puts Path.new(*routes).distance
+    puts Path.new(*routes).time_cost
   else
     puts 'NO SUCH ROUTE'
   end
 end
 
-puts stop_map.relation_of('C', 'C').where(max_routes_count: 3).count
+#puts stop_map.relation_of('C', 'C').where(max_routes_count: 3).count
+puts stop_map.relation_of('C', 'C').where(max_cost_time: 30).count
+
+
 puts stop_map.relation_of('A', 'C').where(routes_count: 4).count
 puts stop_map.relation_of('A', 'C').where(shortest: true).first.distance
 puts stop_map.relation_of('B', 'B').where(shortest: true).first.distance
