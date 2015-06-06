@@ -2,7 +2,7 @@ This set of classes is intended to solve the trains problem. The lib directory c
 
 The main design is using ruby object-oriented, and breadth-first search.
 
-Tested ok with `ruby 2.0.0p247` and `rspec 2.14.1`
+Tested ok with `ruby 2.1.1p76` and `rspec 2.14.1`
 
 * The classes introduction
 
