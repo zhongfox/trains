@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/zhongfox/trains.svg?branch=master)](https://travis-ci.org/zhongfox/trains)
+
 This set of classes is intended to solve the trains problem. The lib directory contains the source code, the spec directory contains the rpsec test code.
 
 The main design is using ruby object-oriented, and breadth-first search.
