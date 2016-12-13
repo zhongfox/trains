@@ -12,13 +12,11 @@ class Path
   def add_route(route)
     @stops << route.from_stop.to_s if stops.empty?
 
-    if stops.last == route.from_stop
-      @stops << route.to_stop.to_s
-      @routes << route
-      @distance += route.distance
-    else
-      raise 'Invalid path'
-    end
+    raise 'Invalid path' unless stops.last == route.from_stop
+
+    @stops << route.to_stop.to_s
+    @routes << route
+    @distance += route.distance
 
     self
   end
@@ -27,17 +25,14 @@ class Path
     (length - 1) * StopMap::TIME_COST_PER_STOP + distance * StopMap::TIME_COST_PER_DISTANCE
   end
 
-  def +(route)
-    self.class.new(*routes + [route])
+  def +(other)
+    self.class.new(*routes + [other])
   end
 
   def begin_from(begin_stop)
-    if stops.empty?
-      @stops << begin_stop.to_s
-    else
-      raise 'The path already has begin stop'
-    end
+    raise 'The path already has begin stop' unless stops.empty?
 
+    @stops << begin_stop.to_s
     self
   end
 
@@ -49,6 +44,5 @@ class Path
     routes.length
   end
 
-  alias :routes_count :length
-
+  alias routes_count length
 end
